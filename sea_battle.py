@@ -181,8 +181,7 @@ class User(Player):
 
 
 class Game:
-    def __init__(self, size=6):
-        self.size = size
+    def __init__(self):
         pl = self.random_board()
         co = self.random_board()
         co.hide = True
