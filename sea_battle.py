@@ -1,7 +1,7 @@
 from random import randint
 
 
-class BoardException(Exception):
+class BoardException(Exception):  # класс исключений
     pass
 
 
@@ -30,13 +30,13 @@ class Dot:
 
 class Ship:
     def __init__(self, start_ship, length, orientation):
-        self.start_ship = start_ship
-        self.length = length
-        self.orientation = orientation
-        self.lives = length
+        self.start_ship = start_ship  # задняя часть корабля
+        self.length = length  # длина корабля
+        self.orientation = orientation  # ориентация, вертикальная или горизонтальная, она же 1 или 0
+        self.lives = length  # жизни корбля, она же длина
     
     @property
-    def dots(self):
+    def dots(self):  # создание списка точек для кораблей
         ship_dots = []
         for count in range(self.length):
             cur_x = self.start_ship.x
@@ -66,8 +66,17 @@ class Board:
         
         self.busy = []
         self.ships = []
+
+    def __str__(self):  # вывод поля
+        res = '  1 2 3 4 5 6'
+        for i, row in enumerate(self.field, 1):
+            res += f'\n{i} {" ".join(row)}'
+
+        if self.hide:
+            res = res.replace('■', 'O')
+        return res
     
-    def add_ship(self, ship):
+    def add_ship(self, ship):  # добавление корабля в игровое поле
         
         for d in ship.dots:
             if self.out(d) or d in self.busy:
@@ -79,7 +88,7 @@ class Board:
         self.ships.append(ship)
         self.contour(ship)
             
-    def contour(self, ship, verb=False):
+    def contour(self, ship, verb=False):  # контурная обводка корабля
         near = [
             (-1, -1), (-1, 0), (-1, 1),
             (0, -1), (0, 0), (0, 1),
@@ -92,24 +101,15 @@ class Board:
                     if verb:
                         self.field[cur.x][cur.y] = '*'
                     self.busy.append(cur)
-    
-    def __str__(self):
-        res = '  1 2 3 4 5 6'
-        for i, row in enumerate(self.field, 1):
-            res += f'\n{i} {" ".join(row)}'
-        
-        if self.hide:
-            res = res.replace('■', 'O')
-        return res
-    
-    def out(self, d):
+
+    def out(self, d):  #
         return not((0 <= d.x < 6) and (0 <= d.y < 6))
 
     def shot(self, d):
-        if self.out(d):
+        if self.out(d):  # исключение в случае выстрела за доску
             raise BoardOutException()
         
-        if d in self.busy:
+        if d in self.busy:  # исключение в случае выстрела в стрелянную точку
             raise BoardUsedException()
         
         self.busy.append(d)
